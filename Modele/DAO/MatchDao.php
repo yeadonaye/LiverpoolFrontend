@@ -78,7 +78,9 @@
                         Score_Adversaire = :score_adversaire,
                         Score_Nous = :score_nous
                     WHERE Id_Match = :id";
+
             $stmt = $this->pdo->prepare($sql);
+            
             return $stmt->execute([
                 ':nom' => $obj->getNomEquipeAdverse(),
                 ':date' => $obj->getDateRencontre(),
