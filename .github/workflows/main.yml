@@ -13,14 +13,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Deploy via FTP
+      - name: Deploy via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ftp-liverpool.alwaysdata.net
           username: ${{ secrets.LIVERPOOL_AD_USER }}
           password: ${{ secrets.LIVERPOOL_AD_PASSWORD }}
-          protocol: ftp
+          protocol: ftps
           port: 21
           local-dir: ./
           server-dir: /www/
-          log-level: verbose
+          security: loose
