@@ -13,6 +13,7 @@ try {
     // Convert Joueur objects to arrays for template compatibility
     foreach ($joueursObjects as $joueur) {
         $joueurs[] = [
+            'Id_Joueur' => $joueur->getIdJoueur(),
             'Num_Licence' => $joueur->getNumLicence(),
             'Nom' => $joueur->getNom(),
             'Prenom' => $joueur->getPrenom(),

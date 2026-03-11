@@ -63,11 +63,10 @@ class JoueurDao implements ModeleDao {
         if (!($obj instanceof Joueur)) return false;
     
         $sql = "INSERT INTO Joueur
-                (Id_Joueur, Num_Licence, Nom, Prenom, Date_Naissance, Taille, Poids, Statut)
-                VALUES (:idJoueur, :numLicence, :nom, :prenom, :dateNaissance, :taille, :poids, :statut)";
+                (Num_Licence, Nom, Prenom, Date_Naissance, Taille, Poids, Statut)
+                VALUES (:numLicence, :nom, :prenom, :dateNaissance, :taille, :poids, :statut)";
         $stmt = $this->pdo->prepare($sql);
         return $stmt->execute([
-            ':idJoueur' => $obj->getIdJoueur(),
             ':numLicence' => $obj->getNumLicence(),
             ':nom'  => $obj->getNom(),
             ':prenom' => $obj->getPrenom(),
