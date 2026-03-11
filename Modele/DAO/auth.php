@@ -10,7 +10,7 @@ const ADMIN_PASSWORD = 'admin';
 if (file_exists(__DIR__ . '/config.php')) {
     require_once __DIR__ . '/config.php';
 }
-
+ 
 /**
  * Vérifier si l'utilisateur est authentifié
  */
