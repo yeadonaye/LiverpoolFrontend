@@ -9,11 +9,11 @@
         $data = json_decode($json);
 
         if (!empty($data->login) && !empty($data->password)){
-            $user = isValidUser($data->login, $data->password, $linkpdo);
+            $authentification = isValidUser($data->login, $data->password, $linkpdo);
 
-            if ($user) {
+            if ($authentification) {
                 $login = $data->login;
-                $role = $user['role'];
+                $role = $authentification['role'];
                 
                 $headers = array('alg'=>'HS256', 'typ'=>'JWT');
                 $payload = array('login'=>$login, 'role'=>$role, 'exp'=>(time() + 3600));
@@ -32,10 +32,10 @@
         $query = "SELECT password, role FROM user WHERE login = :login"; 
         $stmt = $linkpdo->prepare($query);
         $stmt->execute(['login' => $login]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $authentification = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($user && password_verify($password, $user['password'])) {
-            return $user; 
+        if ($authentification && password_verify($password, $authentification['password'])) {
+            return $authentification; 
         }
         return false;
     }
