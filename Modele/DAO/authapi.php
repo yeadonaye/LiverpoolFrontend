@@ -1,6 +1,6 @@
 <?php
     require_once 'jwt_utils.php';
-    require_once 'connexionDB.php'; //J'utilise une BD séparer
+    require_once 'connexionBD.php'; //J'utilise une BD séparer
 
     //Il faut accepter que les réquêtes de méthode POST
     if ($_SERVER['REQUEST_METHOD'] === 'POST'){
