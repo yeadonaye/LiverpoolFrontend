@@ -34,24 +34,33 @@
 
     function seConnecter() {
         global $linkpdo;
-        $login = $_POST['login'] ?? null;
-        $password = $_POST['password'] ?? null;
 
-        if (!empty($login) && !empty($password)) {
-            $user = isValidUser($login, $password, $linkpdo);
-            if ($user) {
-                $headers = ['alg'=>'HS256','typ'=>'JWT'];
-                $payload = [
-                    'login' => $login,
-                    'role'  => $user['role'],
-                    'exp'   => time() + 3600
-                ];
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $login = $_POST['login'] ?? null;
+            $password = $_POST['password'] ?? null;
 
-                return generate_jwt($headers, $payload, "secret_key"); // return JWT
+            if (!empty($login) && !empty($password)) {
+                $user = isValidUser($login, $password, $linkpdo);
+
+                if ($user) {
+                    $headers = ['alg'=>'HS256','typ'=>'JWT'];
+                    $payload = [
+                        'login' => $login,
+                        'role'  => $user['role'],
+                        'exp'   => time() + 3600
+                    ];
+
+                    $jwt = generate_jwt($headers, $payload, "secret_key");
+                    deliver_response('200', 'Authentification réussie', $jwt);
+                } else {
+                    $error = 'Login et/ou mot de passe incorrectes';
+                }
+            } else {
+                $error = 'Les champs login et password sont obligatoires';
             }
         }
 
-        return false;
+        return $error ?? null;
     }
 
     function isValidUser($login, $password, $linkpdo) {
