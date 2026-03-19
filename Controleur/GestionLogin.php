@@ -6,10 +6,7 @@ $secret = "secret_key";
 $jwt = $_COOKIE['jwt'] ?? null; // get token from cookie
 
 // If JWT is already valid, redirect immediately
-if ($jwt && is_jwt_valid($jwt, $secret)) {
-    header('Location: /index.php');
-    exit;
-}
+
 
 // Otherwise, try to log in
 $error = seConnecter(); // returns null if login succeeded
