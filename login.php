@@ -11,7 +11,7 @@
 
         if ($login && $password) {
 
-            $response = ApiClient::login($login, $password);
+            $response = routeClient::login($login, $password);
 
             if ($response['status_code'] == 200 && !empty($response['data'])) {
 

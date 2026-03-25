@@ -1,6 +1,6 @@
 <?php
 
-class ApiClient {
+class routeClient {
 
     public static function login($login, $password) {
         $url = "https://yeadonaye.alwaysdata.net/authapi.php";
@@ -22,7 +22,7 @@ class ApiClient {
         $response = curl_exec($ch);
 
         if (curl_errno($ch)) {
-            return ['status' => 500, 'data' => null];
+            return ['status_code' => 500, 'status_message' => curl_error($ch), 'data' => null];
         }
 
         curl_close($ch);
