@@ -1,4 +1,14 @@
-<?php include __DIR__ . '/Controleur/afficher/index.php'; ?>
+<?php 
+session_start();
+
+include __DIR__ . '/Controleur/afficher/index.php';
+
+
+if (!isset($_SESSION['token'])) {
+    header("Location: login.php");
+    exit;
+}
+?>
 
 <!DOCTYPE html>
 <html lang="fr">

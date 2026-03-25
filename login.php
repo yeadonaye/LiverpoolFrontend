@@ -1,5 +1,36 @@
 <?php
-require_once __DIR__ . '/Controleur/GestionLogin.php';
+    session_start();
+    require_once 'ApiClient.php';
+
+    $error = null;
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        $login = $_POST['login'] ?? null;
+        $password = $_POST['password'] ?? null;
+
+        if ($login && $password) {
+
+            $response = ApiClient::login($login, $password);
+
+            if ($response['status_code'] == 200 && !empty($response['data'])) {
+
+                // Stocker le token dans la session
+                $_SESSION['token'] = $response['data'];
+                $_SESSION['login'] = $login;
+
+                // Redirection vers le dashboard après une connexion réussie
+                header("Location: index.php");
+                exit;
+
+            } else {
+                $error = "Identifiants incorrects";
+            }
+
+        } else {
+            $error = "Champs obligatoires";
+        }
+    }
 ?>
 
 <!DOCTYPE html>
