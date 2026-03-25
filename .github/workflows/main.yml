@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - yado/test/resultat
 
 jobs:
 
@@ -26,25 +25,4 @@ jobs:
           port: 21
           local-dir: ./
           server-dir: /www/
-          security: loose
-
-
-  deploy-yeadonaye:
-    if: github.ref == 'refs/heads/yado/test/resultat'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Deploy to Yeadonaye Alwaysdata
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ftp-yeadonaye.alwaysdata.net
-          username: ${{ secrets.YEADONAYE_AD_USER }}
-          password: ${{ secrets.YEADONAYE_AD_PASSWORD }}
-          protocol: ftps
-          port: 21
-          local-dir: ./
-          server-dir: /www/SENTAYEHU_HISABU_PHP/
           security: loose
