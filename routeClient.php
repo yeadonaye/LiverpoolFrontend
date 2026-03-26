@@ -3,7 +3,7 @@
 class routeClient {
 
 public static function login($login, $password) {
-    $url = "https://liverpoolapi.alwaysdata.net/authapi.php";
+    $url = "https://apiliverpool.alwaysdata.net/authapi.php";
 
     $data = json_encode([
         "login" => $login,
