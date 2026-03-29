@@ -109,6 +109,18 @@ $success = $success ?? '';
                     >
                 </div>
 
+                <div class="mb-3"> //On peut choisir que 'Victoire', 'Défaite' ou 'Nul' pour le résultat du match
+                    <label for="resultat" class="form-label fw-bold">Résultat</label>
+                    <input 
+                        type="text" 
+                        class="form-control" 
+                        id="resultat" 
+                        name="resultat" 
+                        value="<?php echo htmlspecialchars($match['Resultat'] ?? ''); ?>"
+                        placeholder="Résultat du match"
+                    >
+                </div>
+
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label for="scoreNous" class="form-label fw-bold">Notre Score</label>

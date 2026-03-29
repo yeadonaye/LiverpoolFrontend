@@ -2,10 +2,12 @@
 
 class routeClient {
 
-    private const AUTH_URL = 'https://apiliverpool.alwaysdata.net/authapi.php';
-    private const BACKEND_BASE_URL = 'https://yeadonaye.alwaysdata.net/Routes/';
+    private const AUTH_URL          = 'https://apiliverpool.alwaysdata.net/authapi.php';
+    private const BACKEND_BASE_URL  = 'https://yeadonaye.alwaysdata.net/Routes/';
 
-    public static function request(string $method, string $url, ?array $body = null, ?string $token = null) {
+    // Méthode centrale cURL
+
+    public static function request(string $method, string $url, ?array $body = null, ?string $token = null): array {
         $headers = ['Content-Type: application/json'];
 
         if ($token !== null) {
@@ -15,18 +17,18 @@ class routeClient {
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_CUSTOMREQUEST => $method,
-            CURLOPT_HTTPHEADER => $headers,
-            CURLOPT_TIMEOUT => 10
+            CURLOPT_CUSTOMREQUEST  => $method,
+            CURLOPT_HTTPHEADER     => $headers,
+            CURLOPT_TIMEOUT        => 10,
         ]);
 
         if ($body !== null) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
         }
 
-        $response = curl_exec($ch);
+        $response   = curl_exec($ch);
         $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        $curlError = curl_errno($ch) ? curl_error($ch) : null;
+        $curlError  = curl_errno($ch) ? curl_error($ch) : null;
         curl_close($ch);
 
         if ($curlError) {
@@ -41,32 +43,95 @@ class routeClient {
         return $decoded;
     }
 
+    // AUTH
+
     public static function login(string $login, string $password): array {
         return self::request('POST', self::AUTH_URL, [
             'login'    => $login,
-            'password' => $password
+            'password' => $password,
         ]);
     }
 
-    // Match
-    public static function getMatch(string $token): array {
+    // MATCHS
+
+    /** Liste tous les matchs */
+    public static function getMatchs(string $token): array {
         return self::request('GET', self::BACKEND_BASE_URL . 'matchapi.php', null, $token);
     }
 
+    /** Récupère un match par son ID (pour pré-remplir le formulaire de modification) */
     public static function getMatchById(int $id, string $token): array {
         return self::request('GET', self::BACKEND_BASE_URL . 'matchapi.php?id=' . $id, null, $token);
     }
 
+    /** Ajoute un match */
     public static function addMatch(array $data, string $token): array {
         return self::request('POST', self::BACKEND_BASE_URL . 'matchapi.php', $data, $token);
     }
 
+    /** Met à jour un match */
     public static function updateMatch(int $id, array $data, string $token): array {
         return self::request('PUT', self::BACKEND_BASE_URL . 'matchapi.php?id=' . $id, $data, $token);
     }
 
+    /** Supprime un match */
     public static function deleteMatch(int $id, string $token): array {
         return self::request('DELETE', self::BACKEND_BASE_URL . 'matchapi.php?id=' . $id, null, $token);
     }
 
+    // JOUEURS
+
+    /** Liste tous les joueurs */
+    public static function getJoueurs(string $token): array {
+        return self::request('GET', self::BACKEND_BASE_URL . 'joueurapi.php', null, $token);
+    }
+
+    /** Récupère un joueur par son ID */
+    public static function getJoueurById(int $id, string $token): array {
+        return self::request('GET', self::BACKEND_BASE_URL . 'joueurapi.php?id=' . $id, null, $token);
+    }
+
+    /** Ajoute un joueur */
+    public static function addJoueur(array $data, string $token): array {
+        return self::request('POST', self::BACKEND_BASE_URL . 'joueurapi.php', $data, $token);
+    }
+
+    /** Met à jour un joueur */
+    public static function updateJoueur(int $id, array $data, string $token): array {
+        return self::request('PUT', self::BACKEND_BASE_URL . 'joueurapi.php?id=' . $id, $data, $token);
+    }
+
+    /** Supprime un joueur */
+    public static function deleteJoueur(int $id, string $token): array {
+        return self::request('DELETE', self::BACKEND_BASE_URL . 'joueurapi.php?id=' . $id, null, $token);
+    }
+
+    // FEUILLE DE MATCH
+
+    /** Liste les participations d'un match */
+    public static function getFeuilleDeMatch(int $idMatch, string $token): array {
+        return self::request('GET', self::BACKEND_BASE_URL . 'feuilledematchapi.php?id=' . $idMatch, null, $token);
+    }
+
+    /** Ajoute une participation (feuille de match) */
+    public static function addFeuilleDeMatch(array $data, string $token): array {
+        return self::request('POST', self::BACKEND_BASE_URL . 'feuilledematchapi.php', $data, $token);
+    }
+
+    /** Met à jour une participation */
+    public static function updateFeuilleDeMatch(int $id, array $data, string $token): array {
+        return self::request('PUT', self::BACKEND_BASE_URL . 'feuilledematchapi.php?id=' . $id, $data, $token);
+    }
+
+    /** Supprime une participation */
+    public static function deleteFeuilleDeMatch(int $id, string $token): array {
+        return self::request('DELETE', self::BACKEND_BASE_URL . 'feuilledematchapi.php?id=' . $id, null, $token);
+    }
+
+    // STATISTIQUES
+
+    /** Récupère toutes les statistiques (matchs + joueurs) */
+    public static function getStatistiques(string $token): array {
+        return self::request('GET', self::BACKEND_BASE_URL . 'statistiques_api.php', null, $token);
+    }
 }
