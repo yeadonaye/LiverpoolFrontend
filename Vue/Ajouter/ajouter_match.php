@@ -23,30 +23,46 @@ if ($id) {
     }
 }
 
-// Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    // Conversion date jj/mm/aaaa → YYYY-MM-DD
+    $dateRaw = $_POST['dateRencontre'] ?? '';
+    $dateConverted = '';
+    if (!empty($dateRaw)) {
+        $d = DateTime::createFromFormat('d/m/Y', $dateRaw);
+        $dateConverted = $d ? $d->format('Y-m-d') : '';
+    }
+
+    // Conversion heure HH:MM:SS → HH:MM
+    $heureRaw = $_POST['heure'] ?? '';
+    $heureConverted = substr($heureRaw, 0, 5); // garde seulement HH:MM
+
     $data = [
         'Nom_Equipe_Adverse' => $_POST['nomEquipeAdverse'] ?? '',
-        'Date_Rencontre'     => $_POST['dateRencontre']    ?? '',
-        'Heure'              => $_POST['heure']            ?? '',
+        'Date_Rencontre'     => $dateConverted,
+        'Heure'              => $heureConverted,
         'Lieu'               => $_POST['lieu']             ?? '',
         'Resultat'           => $_POST['resultat']         ?? '',
         'Score_Nous'         => $_POST['scoreNous']        !== '' ? (int)$_POST['scoreNous'] : 0,
         'Score_Adversaire'   => $_POST['scoreAdverse']     !== '' ? (int)$_POST['scoreAdverse'] : 0,
     ];
 
-    if ($id) {
-        $response = routeClient::updateMatch((int)$id, $data, $token);
+    if (empty($dateConverted)) {
+        $error = 'Date invalide, format attendu : jj/mm/aaaa';
     } else {
-        $response = routeClient::addMatch($data, $token);
-    }
+        if ($id) {
+            $response = routeClient::updateMatch((int)$id, $data, $token);
+        } else {
+            $response = routeClient::addMatch($data, $token);
+        }
 
-    if ($response['status_code'] === 200 || $response['status_code'] === 201) {
-        $success = $id ? 'Match modifié avec succès !' : 'Match ajouté avec succès !';
-        $match   = $data; // garder les valeurs affichées
-    } else {
-        $error = $response['status_message'] ?? 'Erreur inconnue';
-        $match = $data; // garder les valeurs saisies en cas d'erreur
+        if ($response['status_code'] === 200 || $response['status_code'] === 201) {
+            $success = $id ? 'Match modifié avec succès !' : 'Match ajouté avec succès !';
+            $match   = $data;
+        } else {
+            $error = $response['status_message'] ?? 'Erreur inconnue';
+            $match = $data;
+        }
     }
 }
 ?>
