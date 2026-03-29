@@ -11,21 +11,15 @@ $token = $_SESSION['token'];
 
 // Récupérer les stats via l'API
 $response      = routeClient::getStatistiques($token);
-
-// ⚡ FIX: Remove ['data'] because API returns 'stats' and 'players' at the top level
-$stats         = $response['stats']   ?? [];
-$players       = $response['players'] ?? [];
+$stats         = $response['stats']   ?? [];    // <-- fixed
+$players       = $response['players'] ?? []; 
 
 // Mapper les variables utilisées dans le HTML
 $playerCount   = $stats['totalJoueurs']  ?? 0;
-
 $injuredCount  = 0;
 foreach ($players as $p) {
-    if (isset($p['Statut']) && stripos($p['Statut'], 'bles') !== false) {
-        $injuredCount++;
-    }
+    if (stripos($p['Statut'] ?? '', 'bles') !== false) $injuredCount++;
 }
-
 $wins          = $stats['victoires']     ?? 0;
 $totalMatches  = $stats['totalMatchs']   ?? 0;
 
