@@ -2,19 +2,18 @@
 session_start();
 require_once '../../routeClient.php';
 
-// Redirection si non connecté
 if (!isset($_SESSION['token'])) {
     header('Location: ../../login.php');
     exit;
 }
 
-$token = $_SESSION['token'];
-$id    = $_GET['id'] ?? null;
-$error = '';
-$success = [];
-$match = [];
+$token   = $_SESSION['token'];
+$id      = $_GET['id'] ?? null;
+$error   = '';
+$success = '';
+$match   = [];
 
-// Si modification, charger les données du match
+// Si modification — charger les données du match via l'API
 if ($id) {
     $response = routeClient::getMatchById((int)$id, $token);
     if ($response['status_code'] === 200) {
@@ -26,21 +25,14 @@ if ($id) {
 
 // Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $resultat = '';
-    $scoreNous = $_POST['scoreNous'] ?? '';
-    $scoreAdverse = $_POST['scoreAdverse'] ?? '';
-    
-    // Générer le champ "Resultat" si les scores sont remplis
-    if ($scoreNous !== '' && $scoreAdverse !== '') {
-        $resultat = $scoreNous . '-' . $scoreAdverse;
-    }
-
     $data = [
         'Nom_Equipe_Adverse' => $_POST['nomEquipeAdverse'] ?? '',
-        'Date_Rencontre'     => $_POST['dateRencontre'] ?? '',
-        'Heure'              => $_POST['heure'] ?? '',
-        'Lieu'               => $_POST['lieu'] ?? '',
-        'Resultat'           => $resultat
+        'Date_Rencontre'     => $_POST['dateRencontre']    ?? '',
+        'Heure'              => $_POST['heure']            ?? '',
+        'Lieu'               => $_POST['lieu']             ?? '',
+        'Resultat'           => $_POST['resultat']         ?? '',
+        'Score_Nous'         => $_POST['scoreNous']        !== '' ? (int)$_POST['scoreNous'] : 0,
+        'Score_Adversaire'   => $_POST['scoreAdverse']     !== '' ? (int)$_POST['scoreAdverse'] : 0,
     ];
 
     if ($id) {
@@ -49,11 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response = routeClient::addMatch($data, $token);
     }
 
-    if (isset($response['status_code']) && ($response['status_code'] === 200 || $response['status_code'] === 201)) {
+    if ($response['status_code'] === 200 || $response['status_code'] === 201) {
         $success = $id ? 'Match modifié avec succès !' : 'Match ajouté avec succès !';
-        $match = $data; // pour garder les valeurs dans le formulaire
+        $match   = $data; // garder les valeurs affichées
     } else {
         $error = $response['status_message'] ?? 'Erreur inconnue';
+        $match = $data; // garder les valeurs saisies en cas d'erreur
     }
 }
 ?>
