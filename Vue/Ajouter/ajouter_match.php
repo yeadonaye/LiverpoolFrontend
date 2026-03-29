@@ -169,16 +169,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     >
                 </div>
 
-                <div class="mb-3"> //On peut choisir que 'Victoire', 'Défaite' ou 'Nul' pour le résultat du match
+                <div class="mb-3">
                     <label for="resultat" class="form-label fw-bold">Résultat</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="resultat" 
-                        name="resultat" 
-                        value="<?php echo htmlspecialchars($match['Resultat'] ?? ''); ?>"
-                        placeholder="Résultat du match"
-                    >
+                    <select class="form-control" id="resultat" name="resultat">
+                        <option value="">-- Sélectionner un résultat --</option>
+                        <option value="Victoire" <?php echo ($match['Resultat'] ?? '') === 'Victoire' ? 'selected' : ''; ?>>Victoire</option>
+                        <option value="Nul"      <?php echo ($match['Resultat'] ?? '') === 'Nul'      ? 'selected' : ''; ?>>Nul</option>
+                        <option value="Défaite"  <?php echo ($match['Resultat'] ?? '') === 'Défaite'  ? 'selected' : ''; ?>>Défaite</option>
+                    </select>
                 </div>
 
                 <div class="row">
