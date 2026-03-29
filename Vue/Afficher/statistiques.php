@@ -26,7 +26,7 @@ $nuls               = $stats['nuls'] ?? 0;
 $totalButs          = $stats['totalButs'] ?? 0;
 $butsEncaisses      = $stats['butsEncaisses'] ?? 0;
 $tauxVictoire       = $stats['tauxVictoire'] ?? 0;
-$differenceButsDisplay = $stats['differenceButs'] ?? '0';
+$differenceButsDisplay = $stats['differenceButs'] ?? '0'; 
 ?>
 
 <!DOCTYPE html>
@@ -98,8 +98,8 @@ $differenceButsDisplay = $stats['differenceButs'] ?? '0';
                     <div class="stat-icon">
                         <i class="bi bi-target"></i>
                     </div>
-                    <h3 class="stat-number" data-value="<?php echo $differenceButts; ?>">
-                        <?php echo $differenceButtsDisplay; ?>
+                    <h3 class="stat-number" data-value="<?php echo $differenceButsDisplay; ?>">
+                        <?php echo $differenceButsDisplay; ?>
                     </h3>
                     <p class="stat-label">Différence Buts</p>
                 </div>
