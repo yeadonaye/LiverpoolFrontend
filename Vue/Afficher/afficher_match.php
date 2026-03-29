@@ -89,7 +89,7 @@ $error    = ($response['status_code'] !== 200) ? ($response['status_message'] ??
                                 <a href="../Modifier/modifier_match.php?id=<?php echo $match['Id_Match']; ?>" class="btn btn-sm btn-outline-primary">
                                     <i class="bi bi-pencil me-1"></i>Modifier
                                 </a>
-                                <a href="../../Controleur/suppirmer/supprimer_match.php?id=<?php echo $match['Id_Match']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr?')">
+                                <a href="../Supprimer/supprimer_match.php?id=<?php echo $match['Id_Match']; ?>" class="btn btn-sm btn-outline-danger" onclick="return confirm('Êtes-vous sûr?')">
                                     <i class="bi bi-trash me-1"></i>Supprimer
                                 </a>
                             </div>
