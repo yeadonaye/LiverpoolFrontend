@@ -86,8 +86,21 @@ $error    = ($response['status_code'] !== 200) ? ($response['status_message'] ??
                                     <td><?php echo htmlspecialchars($joueur['Taille'] ?? '-'); ?> m</td>
                                     <td><?php echo htmlspecialchars($joueur['Poids'] ?? '-'); ?> kg</td>
                                     <td>
-                                        <span class="status-badge <?php echo (stripos($joueur['Statut'], 'bles') !== false) ? 'status-injured' : 'status-active'; ?>">
-                                            <?php echo (stripos($joueur['Statut'], 'bles') !== false) ? 'Blessé' : 'Actif'; ?>
+                                        <?php
+                                        $statut = $joueur['Statut'] ?? 'Actif';
+                                        $badgeClass = 'status-active'; // Par défaut
+
+                                        // Détermination de la classe CSS selon le statut
+                                        if (stripos($statut, 'bles') !== false) {
+                                            $badgeClass = 'status-injured';
+                                        } elseif (stripos($statut, 'susp') !== false) {
+                                            $badgeClass = 'status-suspended'; // Pense à ajouter cette classe dans ton CSS
+                                        } elseif (stripos($statut, 'abs') !== false) {
+                                            $badgeClass = 'status-absent';    // Pense à ajouter cette classe dans ton CSS
+                                        }
+                                        ?>
+                                        <span class="status-badge <?php echo $badgeClass; ?>">
+                                            <?php echo htmlspecialchars($statut); ?>
                                         </span>
                                     </td>
                                     <td class="players-table-actions">
