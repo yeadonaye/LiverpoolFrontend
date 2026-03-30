@@ -23,14 +23,31 @@ if ($id) {
 
 // Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    
+    $dateInput = $_POST['dateNaissance'] ?? '';
+    $dateNaissanceApi = null;
+
+    if (!empty($dateInput)) {
+        $parts = explode('/', $dateInput);
+
+        if (count($parts) === 3) {
+            [$jour, $mois, $annee] = $parts;
+
+            if (checkdate((int)$mois, (int)$jour, (int)$annee)) {
+                $dateNaissanceApi = sprintf('%04d-%02d-%02d', $annee, $mois, $jour);
+            }
+        }
+    }
+
+    // ✅ Use converted date
     $data = [
-        'Num_Licence'    => $_POST['numLicence']    ?? '',
-        'Nom'            => $_POST['nom']            ?? '',
-        'Prenom'         => $_POST['prenom']         ?? '',
-        'Date_Naissance' => $_POST['dateNaissance']  ?? '',
-        'Taille'         => $_POST['taille']         ?? '',
-        'Poids'          => $_POST['poids']          ?? '',
-        'Statut'         => $_POST['statut']         ?? '',
+        'Num_Licence'    => $_POST['numLicence'] ?? '',
+        'Nom'            => $_POST['nom'] ?? '',
+        'Prenom'         => $_POST['prenom'] ?? '',
+        'Date_Naissance' => $dateNaissanceApi, // 🔥 FIX HERE
+        'Taille'         => $_POST['taille'] ?? '',
+        'Poids'          => $_POST['poids'] ?? '',
+        'Statut'         => $_POST['statut'] ?? '',
     ];
 
     if ($id) {
