@@ -75,6 +75,7 @@ $error    = ($response['status_code'] !== 200) ? ($response['status_message'] ??
                                     <td>
                                     <?php
                                     $dateNaissance = $joueur['Date_Naissance'] ?? '';
+
                                     if ($dateNaissance && $dateNaissance !== '0000-00-00') {
                                         echo (new DateTime($dateNaissance))->format('d/m/Y');
                                     } else {

@@ -32,6 +32,19 @@ $stmt = $pdo->prepare("SELECT Nom, Prenom FROM Joueur WHERE Id_Joueur = ?");
 $stmt->execute([(int)$joueurId]);
 $joueurData = $stmt->fetch(PDO::FETCH_ASSOC);
 
+// --- Add this here ---
+$rawDate = $joueurData['Date_Commentaire'] ?? ''; // From DB
+
+if ($rawDate && $rawDate !== '0000-00-00') {
+    try {
+        $displayDate = (new DateTime($rawDate))->format('d/m/Y');
+    } catch (Exception $e) {
+        $displayDate = '-'; // fallback if date is invalid
+    }
+} else {
+    $displayDate = '-';
+}
+
 // Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description     = $_POST['description']      ?? '';
