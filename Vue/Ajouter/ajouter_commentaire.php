@@ -35,7 +35,20 @@ $joueurData = $stmt->fetch(PDO::FETCH_ASSOC);
 // Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $description     = $_POST['description']      ?? '';
-    $dateCommentaire = $_POST['date_commentaire'] ?? date('d/m/Y');
+    $dateInput = $_POST['date_commentaire'] ?? date('d/m/Y');
+    $dateCommentaire = null;
+
+    if (!empty($dateInput)) {
+        if (strpos($dateInput, '/') !== false) {
+            [$jour, $mois, $annee] = explode('/', $dateInput);
+        } elseif (strpos($dateInput, '-') !== false) {
+            [$annee, $mois, $jour] = explode('-', $dateInput);
+        }
+
+        if (checkdate((int)$mois, (int)$jour, (int)$annee)) {
+            $dateCommentaire = sprintf('%04d-%02d-%02d', $annee, $mois, $jour);
+        }
+    }
 
     if (empty($description)) {
         $error = 'Le commentaire est obligatoire.';
