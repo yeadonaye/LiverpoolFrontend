@@ -347,23 +347,40 @@ tbody td .badge {
     margin-right: 0.5rem;
 }
 
-/* Status Badge */
+/* Status Badge - Base Style */
 .status-badge {
     display: inline-block;
     padding: 0.35rem 0.75rem;
     border-radius: 20px;
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 600; /* Un peu plus épais pour la lisibilité */
+    text-align: center;
+    min-width: 80px;
 }
 
+/* Couleurs par statut */
 .status-active {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border: 1px solid #c8e6c9;
 }
 
 .status-injured {
-    background-color: #ffebee;
-    color: #c62828;
+    background-color: #fff3e0 !important; /* Orange clair pour blessé */
+    color: #ef6c00 !important;
+    border: 1px solid #ffe0b2;
+}
+
+.status-suspended {
+    background-color: #ffebee !important; /* Rouge clair pour suspendu */
+    color: #c62828 !important;
+    border: 1px solid #ffcdd2;
+}
+
+.status-absent {
+    background-color: #f5f5f5 !important; /* Gris clair pour absent */
+    color: #616161 !important;
+    border: 1px solid #e0e0e0;
 }
 
 /* Empty State */
