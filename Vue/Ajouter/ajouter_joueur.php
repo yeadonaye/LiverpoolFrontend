@@ -178,7 +178,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         class="form-control" 
                         id="dateNaissance" 
                         name="dateNaissance" 
-                        value="<?php echo htmlspecialchars($joueur['Date_Naissance'] ?? ''); ?>"
+                        value="<?php
+                        if (!empty($joueur['Date_Naissance']) && $joueur['Date_Naissance'] !== '0000-00-00') {
+                            echo (new DateTime($joueur['Date_Naissance']))->format('d/m/Y');
+                        }
+                        ?>"
                         placeholder="jj/mm/aaaa"
                         pattern="\d{2}/\d{2}/\d{4}"
                         inputmode="numeric"
