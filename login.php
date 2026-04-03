@@ -28,7 +28,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $_SESSION['token']     = $response['data'];
             $_SESSION['login']     = $login;
-            $_SESSION['expire_at'] = time() + $sessionDuration; // 👈 ajouté
+            $_SESSION['expire_at'] = time() + $sessionDuration;
+            
+            // Décoder le payload du token pour extraire le rôle et le stocker en session
+            $parts = explode('.', $_SESSION['token']);
+            if (count($parts) === 3) {
+                $payload = json_decode(base64_decode($parts[1]), true);
+                $_SESSION['role'] = $payload['role'] ?? 'joueur'; // Par défaut à 'joueur' si le rôle n'est pas présent
+                $_SESSION['user_id'] = $payload['user_id'] ?? null; // Stocker l'ID utilisateur si présent (Pour le 3eme bonus)
+            }
 
             header("Location: index.php");
             exit;

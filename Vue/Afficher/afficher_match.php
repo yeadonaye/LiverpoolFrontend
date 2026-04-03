@@ -2,16 +2,10 @@
 session_start();
 require_once '../../routeClient.php';
 
-// Redirection si non connecté
-if (!isset($_SESSION['token'])) {
-    header('Location: ../../login.php');
-    exit;
-}
+$token = $_SESSION['token'] ?? null; // null si on n'est pas connecté
 
-$token = $_SESSION['token'];
-
-$response = routeClient::getMatchs($token);
-$matchs  = $response['data'] ?? [];
+$response = routeClient::getMatchs($token); // token peut etre null car un visiteur non connecté peut voir la liste des matchs
+$matchs   = $response['data'] ?? [];
 $error    = ($response['status_code'] !== 200) ? ($response['status_message'] ?? 'Erreur inconnue') : '';
 ?>
 

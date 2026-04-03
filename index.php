@@ -8,24 +8,24 @@ if (!isset($_SESSION['token'])) {
 }
 
 $token = $_SESSION['token'];
+$role  = $_SESSION['role'] ?? 'joueur'; // stocke le rôle au login si ce n'est pas déjà fait
 
-// Récupérer les stats via l'API
-$response      = routeClient::getStatistiques($token);
-$stats         = $response['stats']   ?? [];    
-$players       = $response['players'] ?? []; 
+// Stats — disponibles pour coach ET joueur (après fix backend) pour la partie bonuss
+$response = routeClient::getStatistiques($token);
+$stats    = (isset($response['stats'])   && is_array($response['stats']))   ? $response['stats']   : [];
+$players  = (isset($response['players']) && is_array($response['players'])) ? $response['players'] : [];
 
-// Mapper les variables utilisées dans le HTML
-$playerCount   = $stats['totalJoueurs']  ?? 0;
-$injuredCount  = 0;
+$playerCount  = $stats['totalJoueurs'] ?? 0;
+$injuredCount = 0;
 foreach ($players as $p) {
     if (stripos($p['Statut'] ?? '', 'bles') !== false) $injuredCount++;
 }
-$wins          = $stats['victoires']     ?? 0;
-$totalMatches  = $stats['totalMatchs']   ?? 0;
+$wins         = $stats['victoires']  ?? 0;
+$totalMatches = $stats['totalMatchs'] ?? 0;
 
-// Prochain match
+// Matchs — public après fix backend
 $matchResponse = routeClient::getMatchs($token);
-$matchs        = $matchResponse['data']  ?? [];
+$matchs        = (isset($matchResponse['data']) && is_array($matchResponse['data'])) ? $matchResponse['data'] : [];
 $nextMatch     = null;
 $now           = new DateTime();
 foreach ($matchs as $m) {

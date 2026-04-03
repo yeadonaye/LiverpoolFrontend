@@ -29,7 +29,7 @@ class routeClient {
         $response   = curl_exec($ch);
         $httpStatus = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlError  = curl_errno($ch) ? curl_error($ch) : null;
-        curl_close($ch);
+        unset($ch); // ferme la session cURL (équivalent à curl_close())
 
         if ($curlError) {
             return ['status_code' => 500, 'status_message' => $curlError, 'data' => null];
@@ -55,7 +55,7 @@ class routeClient {
     // MATCHS
 
     /** Liste tous les matchs */
-    public static function getMatchs(string $token): array {
+    public static function getMatchs(?string $token): array { // c'est possible que $token soit null car un visiteur non connexté peut voir la liste des matchs
         return self::request('GET', self::BACKEND_BASE_URL . 'matchapi.php', null, $token);
     }
 
