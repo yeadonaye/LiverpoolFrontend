@@ -173,15 +173,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="mb-3">
-                    <label for="lieu" class="form-label fw-bold">Lieu</label>
-                    <input 
-                        type="text" 
-                        class="form-control" 
-                        id="lieu" 
-                        name="lieu" 
-                        value="<?php echo htmlspecialchars($match['Lieu'] ?? ''); ?>"
-                        placeholder="Lieu du match"
-                    >
+                    <label for="lieu" class="form-label fw-bold">Lieu de rencontre</label>
+                    <select class="form-control" id="lieu" name="lieu" required>
+                        <option value="">-- Sélectionner --</option>
+                        <option value="Domicile" <?php echo ($match['Lieu'] ?? '') === 'Domicile' ? 'selected' : ''; ?>>Domicile</option>
+                        <option value="Extérieur" <?php echo ($match['Lieu'] ?? '') === 'Extérieur' ? 'selected' : ''; ?>>Extérieur</option>
+                    </select>
                 </div>
 
                 <div class="mb-3">
