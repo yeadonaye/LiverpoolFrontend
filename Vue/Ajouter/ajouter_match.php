@@ -61,14 +61,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $heureRaw = $_POST['heure'] ?? '';
     $heureConverted = substr($heureRaw, 0, 5); // garde seulement HH:MM
 
+    // Vérifier si le match est dans le futur côté serveur aussi
+    $matchDateTime = new DateTime($dateConverted . ' ' . $heureConverted);
+    $isFutur = $matchDateTime > new DateTime();
+
     $data = [
         'Nom_Equipe_Adverse' => $_POST['nomEquipeAdverse'] ?? '',
         'Date_Rencontre'     => $dateConverted,
         'Heure'              => $heureConverted,
         'Lieu'               => $_POST['lieu'] ?? '',
-        'Resultat'           => $_POST['resultat'] ?? '',
-        'Score_Nous'         => isset($_POST['scoreNous']) && $_POST['scoreNous'] !== '' ? (int)$_POST['scoreNous'] : null,
-        'Score_Adversaire'   => isset($_POST['scoreAdverse']) && $_POST['scoreAdverse'] !== '' ? (int)$_POST['scoreAdverse'] : null,
+        'Resultat'           => $isFutur ? '' : ($_POST['resultat'] ?? ''),
+        'Score_Nous'         => $isFutur ? 0 : (isset($_POST['scoreNous']) && $_POST['scoreNous'] !== '' ? (int)$_POST['scoreNous'] : 0),
+        'Score_Adversaire'   => $isFutur ? 0 : (isset($_POST['scoreAdverse']) && $_POST['scoreAdverse'] !== '' ? (int)$_POST['scoreAdverse'] : 0),
     ];
 
     if (empty($dateConverted)) {
@@ -261,37 +265,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         function checkMatchDate() {
             const dateInput = document.getElementById('dateRencontre').value;
-            const heureInput = document.getElementById('heure').value;
+            const heureInput = document.getElementById('heure').value;           
+            const parsedDate = parseDateFr(dateInput);
             const scoreNous = document.getElementById('scoreNous');
             const scoreAdverse = document.getElementById('scoreAdverse');
-            
-            const parsedDate = parseDateFr(dateInput);
+            const resultat = document.getElementById('resultat');
+
             if (!parsedDate || !heureInput) {
                 scoreNous.disabled = true;
                 scoreAdverse.disabled = true;
+                resultat.disabled = true;
                 return;
             }
 
-            const [h, m] = heureInput.split(':').map(Number);
             if (Number.isNaN(h) || Number.isNaN(m)) {
                 scoreNous.disabled = true;
                 scoreAdverse.disabled = true;
+                resultat.disabled = true;
                 return;
             }
             parsedDate.setHours(h, m, 0, 0);
             const now = new Date();
-            
-            // Désactiver les scores si le match est dans le futur
+
             if (parsedDate > now) {
                 scoreNous.disabled = true;
                 scoreAdverse.disabled = true;
-                scoreNous.title = 'Les scores ne peuvent être saisis que si le match est terminé';
-                scoreAdverse.title = 'Les scores ne peuvent être saisis que si le match est terminé';
+                resultat.disabled = true;
+                scoreNous.title = 'Disponible uniquement après le match';
+                scoreAdverse.title = 'Disponible uniquement après le match';
+                resultat.title = 'Disponible uniquement après le match';
             } else {
                 scoreNous.disabled = false;
                 scoreAdverse.disabled = false;
+                resultat.disabled = false;
                 scoreNous.title = '';
                 scoreAdverse.title = '';
+                resultat.title = '';
             }
         }
         
