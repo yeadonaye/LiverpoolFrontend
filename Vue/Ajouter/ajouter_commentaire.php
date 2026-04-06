@@ -32,30 +32,42 @@ $stmt = $pdo->prepare("SELECT Nom, Prenom FROM Joueur WHERE Id_Joueur = ?");
 $stmt->execute([(int)$joueurId]);
 $joueurData = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// --- Add this here ---
-$rawDate = $joueurData['Date_Commentaire'] ?? ''; // From DB
-
-if ($rawDate && $rawDate !== '0000-00-00') {
-    try {
-        $displayDate = (new DateTime($rawDate))->format('d/m/Y');
-    } catch (Exception $e) {
-        $displayDate = '-'; // fallback if date is invalid
-    }
+// --- Set default display date ---
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $displayDate = $_POST['date_commentaire'] ?? date('d/m/Y');
 } else {
-    $displayDate = '-';
+    $displayDate = date('d/m/Y'); // today for new comment
 }
 
 // Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $description     = $_POST['description']      ?? '';
-    $dateCommentaire = $_POST['date_commentaire'] ?? date('d/m/Y');
+    $description     = $_POST['description'] ?? '';
+    $dateInput       = trim($_POST['date_commentaire'] ?? '');
+    $dateForDb       = date('Y-m-d'); // default = today
+
+    // Conversion jj/mm/aaaa → YYYY-MM-DD
+    if (!empty($dateInput)) {
+        $parts = explode('/', $dateInput);
+        if (count($parts) === 3) {
+            [$jour, $mois, $annee] = $parts;
+            if (checkdate((int)$mois, (int)$jour, (int)$annee)) {
+                $dateForDb = sprintf('%04d-%02d-%02d', $annee, $mois, $jour);
+            } else {
+                $error = 'Date invalide (format attendu : jj/mm/aaaa)';
+            }
+        } else {
+            $error = 'Date invalide (format attendu : jj/mm/aaaa)';
+        }
+    }
 
     if (empty($description)) {
-        $error = 'Le commentaire est obligatoire.';
-    } else {
+        $error = $error ?: 'Le commentaire est obligatoire.';
+    }
+
+    if (!$error) {
         try {
             $stmt = $pdo->prepare("INSERT INTO Commentaire (Id_Joueur, Description, Date_Commentaire) VALUES (?, ?, ?)");
-            $stmt->execute([(int)$joueurId, $description, $dateCommentaire]);
+            $stmt->execute([(int)$joueurId, $description, $dateForDb]);
             header('Location: /Vue/Afficher/afficher_commentaires.php?id=' . $joueurId . '&success=added');
             exit;
         } catch (PDOException $e) {
@@ -93,7 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             </div>
             <div class="mb-3">
                 <label class="form-label fw-bold" for="date_commentaire">Date du commentaire</label>
-                <input type="text" class="form-control" id="date_commentaire" name="date_commentaire" placeholder="jj/mm/aaaa" value="<?php echo htmlspecialchars($_POST['date_commentaire'] ?? ''); ?>">
+                <input type="text" class="form-control" id="date_commentaire" name="date_commentaire" placeholder="jj/mm/aaaa" value="<?php echo htmlspecialchars($displayDate); ?>">
             </div>
             <div class="d-flex gap-2">
                 <button type="submit" class="btn btn-success"><i class="bi bi-save me-2"></i>Enregistrer</button>

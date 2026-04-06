@@ -35,17 +35,44 @@ if (!$comment) {
     $error = 'Commentaire introuvable.';
 }
 
+// Pré-remplir la date pour affichage
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $displayDate = $_POST['date_commentaire'] ?? '';
+} else {
+    $dt = DateTime::createFromFormat('Y-m-d', substr($comment['Date_Commentaire'], 0, 10)) 
+          ?: DateTime::createFromFormat('Y-m-d H:i:s', $comment['Date_Commentaire']);
+    $displayDate = $dt ? $dt->format('d/m/Y') : date('d/m/Y');
+}
+
 // Soumission du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $comment) {
-    $description     = $_POST['description']      ?? '';
-    $dateCommentaire = $_POST['date_commentaire'] ?? $comment['Date_Commentaire'];
+    $description = $_POST['description'] ?? '';
+    $dateInput   = trim($_POST['date_commentaire'] ?? '');
+    $dateForDb   = substr($comment['Date_Commentaire'], 0, 10); // default = existing DB value
+
+    // Conversion jj/mm/aaaa → YYYY-MM-DD
+    if (!empty($dateInput)) {
+        $parts = explode('/', $dateInput);
+        if (count($parts) === 3) {
+            [$jour, $mois, $annee] = $parts;
+            if (checkdate((int)$mois, (int)$jour, (int)$annee)) {
+                $dateForDb = sprintf('%04d-%02d-%02d', $annee, $mois, $jour);
+            } else {
+                $error = 'Date invalide (format attendu : jj/mm/aaaa)';
+            }
+        } else {
+            $error = 'Date invalide (format attendu : jj/mm/aaaa)';
+        }
+    }
 
     if (empty($description)) {
-        $error = 'Le commentaire est obligatoire.';
-    } else {
+        $error = $error ?: 'Le commentaire est obligatoire.';
+    }
+
+    if (!$error) {
         try {
             $stmt = $pdo->prepare("UPDATE Commentaire SET Description = ?, Date_Commentaire = ? WHERE Id_Commentaire = ?");
-            $stmt->execute([$description, $dateCommentaire, (int)$id]);
+            $stmt->execute([$description, $dateForDb, (int)$id]);
             header('Location: /Vue/Afficher/afficher_commentaires.php?id=' . $comment['Id_Joueur'] . '&success=modified');
             exit;
         } catch (PDOException $e) {
@@ -79,18 +106,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $comment) {
             <form method="POST" action="">
                 <div class="mb-3">
                     <label class="form-label fw-bold" for="description">Commentaire *</label>
-                    <textarea class="form-control" id="description" name="description" rows="4" required><?php echo htmlspecialchars($comment['Description']); ?></textarea>
+                    <textarea class="form-control" id="description" name="description" rows="4" required><?php echo htmlspecialchars($_POST['description'] ?? $comment['Description']); ?></textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label fw-bold" for="date_commentaire">Date du commentaire</label>
-                    <?php
-                        $dtVal = '';
-                        $dt = DateTime::createFromFormat('Y-m-d', substr($comment['Date_Commentaire'], 0, 10)) ?: DateTime::createFromFormat('Y-m-d H:i:s', $comment['Date_Commentaire']);
-                        if ($dt) {
-                            $dtVal = $dt->format('d/m/Y');
-                        }
-                    ?>
-                    <input type="text" class="form-control" id="date_commentaire" name="date_commentaire" placeholder="jj/mm/aaaa" value="<?php echo htmlspecialchars($_POST['date_commentaire'] ?? $dtVal); ?>">
+                    <input type="text" class="form-control" id="date_commentaire" name="date_commentaire" placeholder="jj/mm/aaaa" value="<?php echo htmlspecialchars($displayDate); ?>">
                     <small class="text-muted">Format attendu : jj/mm/aaaa. Laisser vide pour conserver la date actuelle du commentaire.</small>
                 </div>
                 <div class="d-flex gap-2">
