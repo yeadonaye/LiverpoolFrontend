@@ -11,12 +11,6 @@ class routeClient {
     public static function request(string $method, string $url, ?array $body = null, ?string $token = null): array {
         $headers = ['Content-Type: application/json'];
 
-        $jsonBody = null; // Step 1: prepare JSON body separately
-        if ($body !== null) {
-            $jsonBody = json_encode($body);
-            $headers[] = 'Content-Length: ' . strlen($jsonBody); // Step 2: add Content-Length
-        }
-
         if ($token !== null) {
             $headers[] = 'Authorization: Bearer ' . $token;
         }
@@ -29,8 +23,8 @@ class routeClient {
             CURLOPT_TIMEOUT        => 10,
         ]);
 
-        if ($jsonBody !== null) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonBody);
+        if ($body !== null) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($body));
         }
 
         $response   = curl_exec($ch);

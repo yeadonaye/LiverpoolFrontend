@@ -68,39 +68,49 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $titulaires  = [];
     $remplacants = [];
 
-    // Préparation des titulaires avec poste et note
+    // --- Titulaires ---
     foreach ($_POST['titulaires'] ?? [] as $joueurId) {
-        $titulaires[] = [
-            'id'    => (int)$joueurId,
-            'poste' => $_POST['poste_titulaires'][$joueurId] ?? '',
-            'note'  => $_POST['note'][$joueurId] ?? null,
-        ];
+        // Only include if poste is selected and note is provided
+        $poste = trim($_POST['poste_titulaires'][$joueurId] ?? '');
+        $note  = isset($_POST['note'][$joueurId]) ? (int)$_POST['note'][$joueurId] : null;
+
+        if ($poste !== '' && $note !== null) {
+            $titulaires[] = [
+                'id'    => (int)$joueurId,
+                'poste' => $poste,
+                'note'  => $note,
+            ];
+        }
     }
 
-    // Préparation des remplaçants avec poste et note
+    // --- Remplaçants ---
     foreach ($_POST['remplacants'] ?? [] as $joueurId) {
-        $remplacants[] = [
-            'id'    => (int)$joueurId,
-            'poste' => $_POST['poste_remplacants'][$joueurId] ?? '',
-            'note'  => $_POST['note'][$joueurId] ?? null,
-        ];
+        $poste = trim($_POST['poste_remplacants'][$joueurId] ?? '');
+        $note  = isset($_POST['note'][$joueurId]) ? (int)$_POST['note'][$joueurId] : null;
+
+        if ($poste !== '' && $note !== null) {
+            $remplacants[] = [
+                'id'    => (int)$joueurId,
+                'poste' => $poste,
+                'note'  => $note,
+            ];
+        }
     }
 
-    // Construction des données à envoyer à l'API
+    // --- Construire le payload exact attendu par l'API ---
     $data = [
         'matchId'     => (int)$matchId,
         'titulaires'  => $titulaires,
         'remplacants' => $remplacants,
     ];
 
-    // Envoi à l'API pour ajout ou mise à jour de la feuille de match
+    // --- Envoi à l'API ---
     $response = routeClient::addFeuilleDeMatch($data, $token);
 
-    // Gestion du retour API : succès ou erreur
     if ($response['status_code'] === 200 || $response['status_code'] === 201) {
         $success = 'Feuille de match enregistrée avec succès !';
     } else {
-        $error = $response['status_message'] ?? 'Erreur inconnue';
+        $error = $response['status_message'] ?? 'Réponse invalide de l\'API';
     }
 }
 ?>
