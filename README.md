@@ -1,59 +1,226 @@
-# ReadMe
+⚽ Liverpool FC Manager – Frontend
+📌 Présentation du projet
 
-## 📋 À propos du projet
+Le Frontend Liverpool FC Manager est une interface web conçue pour gérer un système de gestion d’équipe de football.
+Il permet aux utilisateurs d’interagir avec des API backend pour gérer l’authentification, les joueurs, les matchs et les données statistiques.
 
-Application de gestion d'une équipe de football développée en PHP. L'application permet de gérer les joueurs, les matchs, les performances, les commentaires, et de consulter des statistiques détaillées pour aider l'entraîneur dans la prise de décision.
+Ce frontend fait partie d’un système distribué en 3 couches composé de :
 
-## 👥 Membres du groupe
+Frontend (ce dépôt)
+API REST Backend
+API d’authentification (basée sur JWT)
 
-- **HISABU Nathan Tekeste**
-- **SENTAYEHU Yeadonaye Ashenafi**
+L’application est déployée sur AlwaysData et communique avec des API PHP sécurisées via une authentification JWT.
 
-## 🌐 Liens
+🚀 Application en ligne
+🌐 Frontend : [https://liverpool.alwaysdata.net/](https://liverpool.alwaysdata.net/)
+🔐 Auth API : [https://liverpoolapi.alwaysdata.net/authapi.php](https://liverpoolapi.alwaysdata.net/authapi.php)
+⚙️ Backend API : [https://yeadonaye.alwaysdata.net/Routes/](https://yeadonaye.alwaysdata.net/Routes/)
 
-- **Site Web** : yeadonaye.alwaysdata.net
-- **GitHub** : (https://github.com/yeadonaye/SENTAYEHU_HISABU_PHP.git)
+🧑‍💻 Projet d’équipe
 
-## 🛠️ Environnement technique
+Ce projet a été réalisé dans le cadre d’un travail universitaire à :
 
-- **Langage** : PHP 8+
-- **Architecture** : MVC (Modèle-Vue-Contrôleur)
-- **Base de données** : MySQL via PDO
+IUT Paul Sabatier – Toulouse
 
-## 📁 Structure du projet
+👥 Contributeurs
+Nathan HISABU
+Yeadonaye SENTAYEHU
 
-```
-SENTAYEHU_HISABU_PHP/
-├── Controleur/
-│   ├── afficher       # Contrôleurs pour afficher les données
-│   ├── ajouter        # Contrôleurs pour ajouter des données
-│   ├── modifier       # Contrôleurs pour modifier des données
-│   └── suppirmer      # Contrôleurs pour supprimer des données
-├── Modele/
-│   └── DAO            # Classes DAO pour accès aux données
-└── Vue/
-    ├── Afficher       # Pages de vue pour l'affichage
-    ├── Ajouter        # Pages de vue pour l'ajout
-    ├── CSS            # Fichiers CSS
-    ├── img            # Images utilisées
-    └── Modifier       # Pages de vue pour la modification
-```
+🎯 Fonctionnalités principales
 
-## 🎯 Fonctionnalités principales
+🔐 Système d’authentification
+Connexion basée sur JWT
+Contrôle d’accès basé sur les rôles :
+Coach (accès CRUD complet)
+Joueur (accès en lecture seule aux statistiques)
+Validation de session via requêtes API
 
-- Gestion des joueurs (ajout, modification, suppression, affichage)
-- Gestion des matchs (ajout, modification, résultat)
-- Ajout de commentaires sur les joueurs et suivi de leur statut (Actif, Blessé, Suspendu, Absent)
-- Constitution des feuilles de matchs avec titulaires et remplaçants
-- Évaluation des performances des joueurs après chaque match
-- Statistiques globales et individuelles pour aider l'entraîneur
+👥 Gestion des joueurs
+Voir la liste des joueurs
+Ajouter de nouveaux joueurs (coach uniquement)
+Modifier les informations des joueurs
+Supprimer des joueurs
+Données des joueurs :
+Nom, prénom
+Date de naissance
+Poids / taille
+Statut (disponible, blessé, etc.)
 
-## 🚀 Notes
+⚽ Gestion des matchs
+Voir tous les matchs (accès public possible)
+Créer de nouveaux matchs (coach uniquement)
+Modifier les résultats des matchs
+Supprimer des matchs
+Détails affichés :
+Équipe adverse
+Score
+Date et heure
+Lieu
 
-- Les dates doivent être saisies au format `jj/mm/aaaa`
-- L'accès à l'application nécessite une authentification
-- L'application utilise le pattern MVC pour séparer la logique métier, la présentation et le contrôle des actions
+📋 Feuille de match
+Affecter des joueurs aux matchs
+Définir :
+Composition titulaire (11 joueurs minimum)
+Remplaçants
+Postes des joueurs
+Notes de performance
+Remplacement complet dynamique de la feuille de match
 
-## Login & Mot de passe
-- Login : admin
-- Mot de passe : admin
+📊 Tableau de bord des statistiques
+Statistiques globales de l’équipe :
+Nombre total de matchs
+Victoires / défaites / nuls
+Buts marqués / encaissés
+Taux de victoire
+
+Statistiques des joueurs :
+Matchs joués
+Note moyenne
+Taux de participation
+Tendances de performance
+
+🏗️ Architecture
+
+Le système suit une architecture en 3 couches :
+
+Frontend (ce dépôt)
+↓
+API REST Backend (PHP)
+↓
+Base de données (MariaDB sur AlwaysData)
+
+🔗 Services connectés
+
+Composant | Description | URL
+Frontend | Interface utilisateur | [https://liverpool.alwaysdata.net/](https://liverpool.alwaysdata.net/)
+Backend API | Logique métier football (CRUD) | [https://yeadonaye.alwaysdata.net/Routes/](https://yeadonaye.alwaysdata.net/Routes/)
+Auth API | Service d’authentification JWT | [https://liverpoolapi.alwaysdata.net/authapi.php](https://liverpoolapi.alwaysdata.net/authapi.php)
+
+🔐 Flux d’authentification
+
+L’utilisateur se connecte via le frontend
+Les identifiants sont envoyés à l’Auth API
+Un token JWT est retourné
+Le token est stocké dans la session du frontend
+Chaque requête inclut :
+Authorization: Bearer <JWT_TOKEN>
+Le backend valide le token avant traitement
+
+🧠 Stack technique
+
+Frontend
+HTML5
+CSS3
+JavaScript (vanilla ou framework selon implémentation)
+
+Communication backend
+API REST (PHP)
+Format JSON
+Authentification JWT
+
+DevOps
+Hébergement AlwaysData
+GitHub Actions (CI/CD)
+Déploiement automatique via FTP lors des push
+
+🔄 Pipeline CI/CD
+
+Chaque dépôt inclut un déploiement automatisé :
+
+Push sur la branche main
+Déclenchement du workflow GitHub Actions
+Déploiement automatique via FTP sur AlwaysData
+Mise à jour instantanée du site en ligne
+
+🧪 Comptes de test
+
+Coach (accès complet)
+login : coach1
+password : Liverpool2025
+
+Joueur (lecture seule)
+login : joueur1
+password : Liverpool2025
+
+📁 Structure du projet
+
+LiverpoolFrontend/
+│
+├── index.html
+├── login.html
+├── dashboard.html
+├── players.html
+├── matches.html
+├── stats.html
+│
+├── assets/
+│   ├── css/
+│   ├── js/
+│   └── images/
+│
+├── services/
+│   ├── api.js
+│   ├── auth.js
+│
+└── README.md
+
+🔑 Responsabilités du frontend
+
+Ce dépôt gère :
+
+Le rendu de l’interface utilisateur
+La communication avec les API
+Le stockage du token d’authentification
+L’affichage basé sur les rôles
+La visualisation des données (joueurs, matchs, statistiques)
+
+Il ne fait pas :
+
+Stockage de données en base
+Logique métier
+Vérification d’authentification (gérée par l’Auth API)
+
+📌 Exemple de communication API
+
+Requête de login
+POST /authapi.php
+Content-Type: application/json
+{
+"login": "coach1",
+"password": "Liverpool2025"
+}
+
+Requête authentifiée
+GET /Routes/joueurapi.php
+Authorization: Bearer <JWT_TOKEN>
+
+⚠️ Remarques importantes
+
+Durée de vie du token : 1 heure
+Le frontend ne valide pas les tokens localement
+Toutes les vérifications de sécurité sont gérées par les services backend
+Des restrictions CORS s’appliquent à l’Auth API (uniquement domaine frontend)
+
+📊 Objectifs du projet
+
+Ce projet démontre :
+
+Développement web full-stack
+Intégration d’API REST
+Systèmes d’authentification (JWT)
+Architecture multi-dépôts
+Pipeline de déploiement CI/CD
+Organisation de projet réel
+
+📈 Améliorations futures (si extension)
+
+Migration React/Vue
+Amélioration UI/UX
+Mise à jour en temps réel des matchs
+Notifications en temps réel (WebSockets)
+Tableau de bord analytique avancé
+
+📫 Auteurs
+Nathan HISABU
+Yeadonaye SENTAYEHU
